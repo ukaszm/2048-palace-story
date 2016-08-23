@@ -10,24 +10,31 @@ import UIKit
 import SpriteKit
 
 class GameViewController: UIViewController {
+    var scene: GameScene!
+    var board: Board!
+}
+
+//MARK: overrided methods
+extension GameViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if let scene = GameScene(fileNamed:"GameScene") {
-            // Configure the view.
-            let skView = self.view as! SKView
-            skView.showsFPS = true
-            skView.showsNodeCount = true
-            
-            /* Sprite Kit applies additional optimizations to improve rendering performance */
-            skView.ignoresSiblingOrder = true
-            
-            /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
-            
-            skView.presentScene(scene)
-        }
+        
+        guard let skView = view as? SKView else { return }
+        scene = GameScene(size: skView.bounds.size)
+        scene.scaleMode = .AspectFill
+        board = Board()
+        scene.board = board
+        scene.swipeHandler = handleSwipe
+        
+        skView.presentScene(scene)
+        
+        
+        
+        skView.showsFPS = true
+        skView.showsNodeCount = true
+        
+        startGame()
     }
 
     override func shouldAutorotate() -> Bool {
@@ -35,11 +42,7 @@ class GameViewController: UIViewController {
     }
 
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return .AllButUpsideDown
-        } else {
-            return .All
-        }
+        return [.Portrait, .PortraitUpsideDown]
     }
 
     override func didReceiveMemoryWarning() {
@@ -49,5 +52,24 @@ class GameViewController: UIViewController {
 
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+}
+
+//MARK: methods
+extension GameViewController {
+    func startGame() {
+        let newTiles = board.newGame()
+        scene.addSpriteForTiles(newTiles)
+    }
+    
+    func handleSwipe(direction: MoveDirection) {
+        view.userInteractionEnabled = false
+        
+        print("handle move: \(direction)")
+        board.prepareForHandlingMove()
+        print("can move: \(board.isPossibleMove(direction))")
+        
+        view.userInteractionEnabled = true
+        
     }
 }
