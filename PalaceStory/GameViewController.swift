@@ -64,12 +64,31 @@ extension GameViewController {
     
     func handleSwipe(direction: MoveDirection) {
         view.userInteractionEnabled = false
-        
-        print("handle move: \(direction)")
         board.prepareForHandlingMove()
-        print("can move: \(board.isPossibleMove(direction))")
+        guard board.isPossibleMove(direction) else {
+            view.userInteractionEnabled = true
+            return
+        }
         
-        view.userInteractionEnabled = true
+        continueMoveTiles(direction)
+    }
+    
+    func continueMoveTiles(direction: MoveDirection) {
         
+        guard board.isPossibleMove(direction) else {
+            let tile = board.addBasicTile()
+            scene.addSpriteForTiles([tile])
+            view.userInteractionEnabled = true
+            
+            if board.isItGameOver() {
+                print("GAME OVER")
+            }
+            return
+        }
+        
+        let moves = board.performSwipe(direction)
+        scene.animateSpriteSwipe(moves) { [unowned self] in
+            self.continueMoveTiles(direction)
+        }
     }
 }

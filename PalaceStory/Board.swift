@@ -8,6 +8,11 @@
 
 import SpriteKit
 
+struct BoardCoords {
+    var row: Int
+    var column: Int
+}
+
 class Board {
     private var tiles: Array2D<Tile>
     
@@ -31,49 +36,49 @@ extension Board {
         return newTiles
     }
     
+    func addBasicTile() -> Tile? {
+        guard let coords = findEmptyField() else { return nil}
+        let tile = Tile(row: coords.row, column: coords.column, tileType: TileType.basicTile)
+        tiles[coords.row, coords.column] = tile
+        return tile
+    }
+    
     func isItGameOver() -> Bool {
-        return true
+        prepareForHandlingMove()
+        return !(isPossibleMove(.Left) || isPossibleMove(.Right) || isPossibleMove(.Up) || isPossibleMove(.Down))
     }
     
     func prepareForHandlingMove() {
-        Board.executeForEveryField { [unowned self] (row, column) in
-            self.tiles[row, column]?.canEvolve = true
+        Board.executeForEveryField { [unowned self] coords in
+            self.tiles[coords.row, coords.column]?.canEvolve = true
         }
     }
     
     func isPossibleMove(direction: MoveDirection) -> Bool {
-        switch direction {
-        case .Unknown:
-            return false
-        case .Left:
-            return canMoveLeft()
-        case .Right:
-            return canMoveRight()
-        case .Up:
-            return canMoveUp()
-        case .Down:
-            return canMoveDown()
+        
+        var canMove = false
+        executeForTileSwiping(direction) { [unowned self] (tileCoords, nextTileCoords) in
+            if self.checkMoveConditionsFor(tile: self.tiles[tileCoords.row, tileCoords.column], nextTile: self.tiles[nextTileCoords.row, nextTileCoords.column]) {
+                canMove = true
+            }
         }
+        return canMove
     }
 
-    func performSwipe(direction: MoveDirection) {
-        
-        
+    func performSwipe(direction: MoveDirection) -> [TileMove] {
+        return moveTiles(direction)
     }
-    
-    func continueSwipe(direction: MoveDirection) {
-        
-    }
+
 }
 
 //MARK: private methods
 extension Board {
-    func findEmptyField() -> (row:Int, column:Int)? {
-        var emptyTiles = [(Int, Int)]()
+    func findEmptyField() -> BoardCoords? {
+        var emptyTiles = [BoardCoords]()
         
-        Board.executeForEveryField { [unowned self] (row, column) in
-            if self.tiles[row, column] == nil {
-                emptyTiles.append(row, column)
+        Board.executeForEveryField { [unowned self] coords in
+            if self.tiles[coords.row, coords.column] == nil {
+                emptyTiles.append(coords)
             }
         }
         
@@ -81,57 +86,56 @@ extension Board {
         return emptyTiles[Int(arc4random_uniform(UInt32(emptyTiles.count)))]
     }
     
-    private func addBasicTile() -> Tile? {
-        guard let coords = findEmptyField() else { return nil}
-        let tile = Tile(row: coords.row, column: coords.column, tileType: TileType.basicTile)
-        tiles[coords.row, coords.column] = tile
-        return tile
+    private func moveTiles(direction: MoveDirection) -> [TileMove] {
+        var moves = [TileMove]()
+        executeForTileSwiping(direction) { [unowned self] (tileCoords, nextTileCoords) in
+            guard let tile = self.tiles[tileCoords.row, tileCoords.column] else { return }
+            guard let nextTile = self.tiles[nextTileCoords.row, nextTileCoords.column] else {
+                self.tiles[tileCoords.row, tileCoords.column] = nil
+                self.tiles[nextTileCoords.row, nextTileCoords.column] = tile
+                tile.row = nextTileCoords.row
+                tile.column = nextTileCoords.column
+                moves.append(TileMove(tile: tile, from: tileCoords, to: nextTileCoords, tileB: nil, newTile: nil))
+                return
+            }
+            guard tile.tileType == nextTile.tileType && tile.canEvolve && nextTile.canEvolve else { return }
+            let newTile = Tile(row: nextTileCoords.row, column: nextTileCoords.column, tileType: tile.tileType.nextTile)
+            self.tiles[tileCoords.row, tileCoords.column] = nil
+            self.tiles[nextTileCoords.row, nextTileCoords.column] = newTile
+            
+            moves.append(TileMove(tile: tile, from: tileCoords, to: nextTileCoords, tileB: nextTile, newTile: newTile))
+        }
+        return moves
     }
     
-
-    
-    private func canMoveLeft() -> Bool {
-        for row in 0..<GameOptions.boardSize {
-            for column in 1..<GameOptions.boardSize {
-                if checkMoveConditionsFor(tile: tiles[row, column], nextTile: tiles[row, column - 1]) {
-                    return true
-                }
+    private func executeForTileSwiping(direction: MoveDirection, action: (tileCoords: BoardCoords, nextTileCoords: BoardCoords)->()) {
+        var rowsStride    = 0.stride(through: GameOptions.boardSize - 1, by: 1)
+        var columnsStride = 0.stride(through: GameOptions.boardSize - 1, by: 1)
+        var nextRowOffset    = 0
+        var nextColumnOffset = 0
+        
+        switch direction {
+        case .Unknown:
+            return
+        case .Left:
+            columnsStride = 1.stride(through: GameOptions.boardSize - 1, by: 1)
+            nextColumnOffset = -1
+        case .Right:
+            columnsStride = (GameOptions.boardSize - 2).stride(through: 0, by: -1)
+            nextColumnOffset = 1
+        case .Up:
+            rowsStride = 1.stride(through: GameOptions.boardSize - 1, by: 1)
+            nextRowOffset = -1
+        case .Down:
+            rowsStride = (GameOptions.boardSize - 2).stride(through: 0, by: -1)
+            nextRowOffset = 1
+        }
+        
+        for row in rowsStride {
+            for column in columnsStride {
+                action(tileCoords: BoardCoords(row: row, column: column), nextTileCoords: BoardCoords(row: row + nextRowOffset, column: column + nextColumnOffset))
             }
         }
-        return false
-    }
-    
-    private func canMoveRight() -> Bool {
-        for row in 0..<GameOptions.boardSize {
-            for column in (0..<GameOptions.boardSize-1).reverse() {
-                if checkMoveConditionsFor(tile: tiles[row, column], nextTile: tiles[row, column + 1]) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-    
-    private func canMoveUp() -> Bool {
-        for column in 0..<GameOptions.boardSize {
-            for row in 1..<GameOptions.boardSize {
-                if checkMoveConditionsFor(tile: tiles[row, column], nextTile: tiles[row - 1, column]) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-    
-    private func canMoveDown() -> Bool {
-        for column in 0..<GameOptions.boardSize {
-            for row in (0..<GameOptions.boardSize - 1).reverse() {
-                if checkMoveConditionsFor(tile: tiles[row, column], nextTile: tiles[row + 1, column]) {
-                    return true
-                }
-            }
-        }
-        return false
     }
     
     private func checkMoveConditionsFor(tile tile: Tile?, nextTile: Tile?) -> Bool {
@@ -145,10 +149,10 @@ extension Board {
 
 //MARK: static methods
 extension Board {
-    static func executeForEveryField(toExecute: (Int, Int)->()) {
-        for column in 0..<GameOptions.boardSize {
-            for row in 0..<GameOptions.boardSize {
-                toExecute(column, row)
+    static func executeForEveryField(toExecute: (BoardCoords)->()) {
+        for row in 0..<GameOptions.boardSize {
+            for column in 0..<GameOptions.boardSize {
+                toExecute(BoardCoords(row: row, column: column))
             }
         }
     }

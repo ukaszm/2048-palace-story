@@ -9,9 +9,9 @@
 import Foundation
 
 struct TileMove {
-    let fromRow: Int
-    let fromColumn: Int
-    let toRow: Int
-    let toColumn: Int
-    let shouldDisappear: Bool
+    let tile: Tile
+    let from: BoardCoords
+    let to: BoardCoords
+    let tileB: Tile?
+    let newTile: Tile?
 }
