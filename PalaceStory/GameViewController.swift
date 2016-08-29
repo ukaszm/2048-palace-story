@@ -63,13 +63,15 @@ extension GameViewController {
     }
     
     func handleSwipe(direction: MoveDirection) {
+        guard direction != .Unknown else { return }
         view.userInteractionEnabled = false
         board.prepareForHandlingMove()
         guard board.isPossibleMove(direction) else {
             view.userInteractionEnabled = true
+            scene.playSound(.Wrong)
             return
         }
-        
+        scene.playSound(.Move)
         continueMoveTiles(direction)
     }
     
@@ -81,6 +83,7 @@ extension GameViewController {
             view.userInteractionEnabled = true
             
             if board.isItGameOver() {
+                scene.playSound(.GameOver)
                 print("GAME OVER")
             }
             return

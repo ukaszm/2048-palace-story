@@ -7,7 +7,22 @@
 //
 
 import SpriteKit
+import AVFoundation
 
+enum SoundType: Int {
+    case Move = 0, Wrong, GameOver
+    
+    var playAction: SKAction {
+        switch self {
+        case .Move:
+            return SKAction.playSoundFileNamed("Sounds/move.wav", waitForCompletion: false)
+        case .Wrong:
+            return SKAction.playSoundFileNamed("Sounds/wrong.wav", waitForCompletion: false)
+        case .GameOver:
+            return SKAction.playSoundFileNamed("Sounds/game_over.wav", waitForCompletion: false)
+        }
+    }
+}
 
 struct GameOptions {
     static let boardSize = 4
@@ -56,7 +71,7 @@ class GameScene: SKScene {
 //MARK: overrided methods
 extension GameScene {
     override func didMoveToView(view: SKView) {
-
+        super.didMoveToView(view)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -79,6 +94,9 @@ extension GameScene {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         super.touchesEnded(touches, withEvent: event)
         swipeHandler?(direction: swipe.direction)
+        
+        swipe.start = nil
+        swipe.stop = nil
     }
     
     override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
@@ -113,17 +131,14 @@ extension GameScene {
     }
     
     func animateSpriteSwipe(moves: [TileMove], completion: ()->()) {
-        let scaleDuration: NSTimeInterval = 0.02
-        let moveDuration:  NSTimeInterval = 0.075
+
+        let moveDuration:  NSTimeInterval = 0.05
         let fadeDuration:  NSTimeInterval = 0.05
         
-        let scaleNormalAction = SKAction.scaleTo(1.0, duration: scaleDuration)
         let fadeAction = SKAction.fadeOutWithDuration(fadeDuration)
-        let waitIfNotMoveAction = SKAction.waitForDuration(moveDuration)
-        let waitForNewSpriteAction = SKAction.waitForDuration(scaleDuration + moveDuration)
+        let waitForMoveAction = SKAction.waitForDuration(moveDuration)
         let removeAction = SKAction.removeFromParent()
         
-        var isEvolving = false
         for move in moves {
             guard let sprite = move.tile.sprite else { continue }
             
@@ -133,28 +148,44 @@ extension GameScene {
                 continue
             }
         
+            let actions = [moveAction, fadeAction, removeAction]
             sprite.removeAllActions()
-            let actions = [scaleNormalAction, moveAction, fadeAction, removeAction]
+            sprite.setScale(1.0)
             sprite.runAction(SKAction.sequence(actions))
             
-            let spriteBActions = [scaleNormalAction, waitIfNotMoveAction, removeAction]
+            let spriteBActions = [waitForMoveAction, removeAction]
+            move.tileB?.sprite?.removeAllActions()
+            move.tileB?.sprite?.setScale(1.0)
             move.tileB?.sprite?.runAction(SKAction.sequence(spriteBActions))
             
             let newSpriteAction = SKAction.runBlock{ [unowned self] in self.addSpriteForTiles([move.newTile]) }
-            runAction(SKAction.sequence([waitForNewSpriteAction, newSpriteAction]))
-            isEvolving = true
+            runAction(SKAction.sequence([waitForMoveAction, newSpriteAction]))
         }
-        let moveTime = isEvolving ? (scaleDuration + moveDuration + fadeDuration) : moveDuration
-        let waitForMovesAction = SKAction.waitForDuration(moveTime)
         let runCompletionAction = SKAction.runBlock { completion() }
-        runAction(SKAction.sequence([waitForMovesAction, runCompletionAction]))
+        runAction(SKAction.sequence([waitForMoveAction, runCompletionAction]))
+    }
+    
+    func playSound(soundType: SoundType){
+        runAction(soundType.playAction)
+        
+//        guard let url = NSBundle.mainBundle().URLForResource("Sounds/move", withExtension: "wav") else { return }
+//        do {
+//            let player = try AVAudioPlayer.init(contentsOfURL: url)
+//            player.volume = 0.5
+//            player.prepareToPlay()
+//            
+//            let playAction = SKAction.runBlock { player.play() }
+//            let waitAction = SKAction.waitForDuration(player.duration + 1)
+//            runAction(SKAction.sequence([playAction, waitAction]))
+//        }
+//        catch let error {
+//            print(error)
+//        }
     }
 }
 
 //MARK: private methods
 extension GameScene {
-
-    
     private func pointForTile(row row: Int, column: Int) -> CGPoint {
         return CGPoint(x: GameOptions.tileSize * CGFloat(column) + GameOptions.tileSize / 2,
                        y: -GameOptions.tileSize * CGFloat(row) - GameOptions.tileSize / 2)
