@@ -10,6 +10,9 @@ import UIKit
 import SpriteKit
 
 class GameViewController: UIViewController {
+    
+    @IBOutlet weak var scoreLabel: UILabel!
+    
     var scene: GameScene!
     var board: Board!
 }
@@ -19,22 +22,7 @@ extension GameViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        guard let skView = view as? SKView else { return }
-        scene = GameScene(size: skView.bounds.size)
-        scene.scaleMode = .AspectFill
-        board = Board()
-        scene.board = board
-        scene.swipeHandler = handleSwipe
-        
-        skView.presentScene(scene)
-        
-        
-        
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        
-        startGame()
+        newGame()
     }
 
     override func shouldAutorotate() -> Bool {
@@ -55,14 +43,43 @@ extension GameViewController {
     }
 }
 
-//MARK: methods
+//MARK: actions
 extension GameViewController {
-    func startGame() {
-        let newTiles = board.newGame()
-        scene.addSpriteForTiles(newTiles)
+    @IBAction func restartGameAction(sender: AnyObject) {
+        newGame()
     }
     
-    func handleSwipe(direction: MoveDirection) {
+    @IBAction func gameOverAction(sender: AnyObject) {
+    }
+}
+
+//MARK: public methods
+extension GameViewController {
+    
+}
+
+//MARK: private methods
+extension GameViewController {
+    
+    private func newGame() {
+        guard let skView = view as? SKView else { return }
+        scene = GameScene(size: skView.bounds.size)
+        scene.scaleMode = .AspectFill
+        board = Board()
+        scene.board = board
+        scene.swipeHandler = handleSwipe
+        
+        skView.presentScene(scene)
+        
+        let newTiles = board.newGame()
+        scene.addSpriteForTiles(newTiles)
+        updateScore()
+        
+        skView.showsFPS = true
+        skView.showsNodeCount = true
+    }
+    
+    private func handleSwipe(direction: MoveDirection) {
         guard direction != .Unknown else { return }
         view.userInteractionEnabled = false
         board.prepareForHandlingMove()
@@ -72,26 +89,37 @@ extension GameViewController {
             return
         }
         scene.playSound(.Move)
-        continueMoveTiles(direction)
+        performTilesMove(direction)
     }
     
-    func continueMoveTiles(direction: MoveDirection) {
-        
-        guard board.isPossibleMove(direction) else {
+    private func performTilesMove(direction: MoveDirection) {
+        if board.isPossibleMove(direction) {
+            let moves = board.performSwipe(direction)
+            scene.animateSpriteSwipe(moves) { [unowned self] in
+                self.performTilesMove(direction)
+            }
+            updateScore()
+        }
+        else {
             let tile = board.addBasicTile()
             scene.addSpriteForTiles([tile])
+            checkGameOver()
             view.userInteractionEnabled = true
-            
-            if board.isItGameOver() {
-                scene.playSound(.GameOver)
-                print("GAME OVER")
-            }
-            return
-        }
-        
-        let moves = board.performSwipe(direction)
-        scene.animateSpriteSwipe(moves) { [unowned self] in
-            self.continueMoveTiles(direction)
         }
     }
+    
+    private func checkGameOver() {
+        guard board.isItGameOver() else { return }
+        scene.playSound(.GameOver)
+        if HighScore.newHighScore(board.points) {
+            print("new HighScore: \(HighScore.points)")
+        }
+        print("GAME OVER")
+    }
+    
+    private func updateScore() {
+        scoreLabel.text = "Score: \(board.points)"
+    }
 }
+
+

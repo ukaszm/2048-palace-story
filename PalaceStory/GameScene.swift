@@ -66,6 +66,10 @@ class GameScene: SKScene {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    deinit {
+        print("GameScene - deinit")
+    }
 }
 
 //MARK: overrided methods
@@ -167,20 +171,6 @@ extension GameScene {
     
     func playSound(soundType: SoundType){
         runAction(soundType.playAction)
-        
-//        guard let url = NSBundle.mainBundle().URLForResource("Sounds/move", withExtension: "wav") else { return }
-//        do {
-//            let player = try AVAudioPlayer.init(contentsOfURL: url)
-//            player.volume = 0.5
-//            player.prepareToPlay()
-//            
-//            let playAction = SKAction.runBlock { player.play() }
-//            let waitAction = SKAction.waitForDuration(player.duration + 1)
-//            runAction(SKAction.sequence([playAction, waitAction]))
-//        }
-//        catch let error {
-//            print(error)
-//        }
     }
 }
 

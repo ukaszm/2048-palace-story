@@ -15,9 +15,14 @@ struct BoardCoords {
 
 class Board {
     private var tiles: Array2D<Tile>
+    private (set) var points = 0
     
     init() {
         tiles = Array2D(row: GameOptions.boardSize, column: GameOptions.boardSize)
+    }
+    
+    deinit {
+        print("Board - deinit")
     }
 }
 
@@ -31,7 +36,7 @@ extension Board {
     
     func newGame() -> [Tile?] {
         tiles = Array2D(row: GameOptions.boardSize, column: GameOptions.boardSize)
-
+        points = 0
         let newTiles = [addBasicTile(), addBasicTile()]
         return newTiles
     }
@@ -102,6 +107,7 @@ extension Board {
             let newTile = Tile(row: nextTileCoords.row, column: nextTileCoords.column, tileType: tile.tileType.nextTile)
             self.tiles[tileCoords.row, tileCoords.column] = nil
             self.tiles[nextTileCoords.row, nextTileCoords.column] = newTile
+            self.points += 1<<(tile.tileType.upgradePoints - 1)
             
             moves.append(TileMove(tile: tile, from: tileCoords, to: nextTileCoords, tileB: nextTile, newTile: newTile))
         }

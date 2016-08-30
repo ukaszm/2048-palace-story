@@ -30,6 +30,10 @@ extension TileType {
         return tile
     }
     
+    var upgradePoints: Int {
+        return rawValue
+    }
+    
     static var basicTile: TileType {
         return .Fireplace_1
     }
