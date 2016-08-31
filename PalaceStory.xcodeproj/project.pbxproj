@@ -25,6 +25,8 @@
 		B28200371D7597A4006F9874 /* HighScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28200361D7597A4006F9874 /* HighScore.swift */; };
 		B28200391D75EBC1006F9874 /* Risaltyp.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B28200381D75E600006F9874 /* Risaltyp.ttf */; };
 		B282003B1D75F259006F9874 /* Label+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282003A1D75F259006F9874 /* Label+Extension.swift */; };
+		B282003D1D75F770006F9874 /* GameOverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282003C1D75F770006F9874 /* GameOverViewController.swift */; };
+		B282003F1D75FD95006F9874 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B282003E1D75FD95006F9874 /* BaseViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,8 @@
 		B28200361D7597A4006F9874 /* HighScore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HighScore.swift; sourceTree = "<group>"; };
 		B28200381D75E600006F9874 /* Risaltyp.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Risaltyp.ttf; sourceTree = "<group>"; };
 		B282003A1D75F259006F9874 /* Label+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Label+Extension.swift"; sourceTree = "<group>"; };
+		B282003C1D75F770006F9874 /* GameOverViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverViewController.swift; sourceTree = "<group>"; };
+		B282003E1D75FD95006F9874 /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,15 +124,9 @@
 			isa = PBXGroup;
 			children = (
 				B275AAB81D5ACE3D00F8D910 /* AppDelegate.swift */,
-				B2591D7E1D661A3300B929EF /* Array2D.swift */,
-				B2591D801D661B5200B929EF /* Board.swift */,
-				B275AABC1D5ACE3E00F8D910 /* GameScene.swift */,
-				B28200321D6C0DF4006F9874 /* TileMove.swift */,
-				B275AABE1D5ACE3E00F8D910 /* GameViewController.swift */,
-				B275AAEF1D66124100F8D910 /* Tile.swift */,
-				B2591D821D662DFF00B929EF /* Swipe.swift */,
-				B28200361D7597A4006F9874 /* HighScore.swift */,
-				B282003A1D75F259006F9874 /* Label+Extension.swift */,
+				B28200421D75FFCC006F9874 /* GameLogic */,
+				B28200411D75FF84006F9874 /* Helpers */,
+				B28200401D75FF16006F9874 /* ViewControllers */,
 				B275AAC01D5ACE3E00F8D910 /* Main.storyboard */,
 				B275AAEA1D6610C700F8D910 /* Resources */,
 			);
@@ -164,6 +162,38 @@
 				B275AAED1D6611B300F8D910 /* Tiles.atlas */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		B28200401D75FF16006F9874 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				B282003E1D75FD95006F9874 /* BaseViewController.swift */,
+				B275AABE1D5ACE3E00F8D910 /* GameViewController.swift */,
+				B282003C1D75F770006F9874 /* GameOverViewController.swift */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		B28200411D75FF84006F9874 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				B2591D7E1D661A3300B929EF /* Array2D.swift */,
+				B28200361D7597A4006F9874 /* HighScore.swift */,
+				B282003A1D75F259006F9874 /* Label+Extension.swift */,
+				B2591D821D662DFF00B929EF /* Swipe.swift */,
+				B28200321D6C0DF4006F9874 /* TileMove.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		B28200421D75FFCC006F9874 /* GameLogic */ = {
+			isa = PBXGroup;
+			children = (
+				B2591D801D661B5200B929EF /* Board.swift */,
+				B275AABC1D5ACE3E00F8D910 /* GameScene.swift */,
+				B275AAEF1D66124100F8D910 /* Tile.swift */,
+			);
+			name = GameLogic;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,8 +335,10 @@
 				B275AAF01D66124100F8D910 /* Tile.swift in Sources */,
 				B2591D811D661B5200B929EF /* Board.swift in Sources */,
 				B28200371D7597A4006F9874 /* HighScore.swift in Sources */,
+				B282003F1D75FD95006F9874 /* BaseViewController.swift in Sources */,
 				B275AABF1D5ACE3E00F8D910 /* GameViewController.swift in Sources */,
 				B282003B1D75F259006F9874 /* Label+Extension.swift in Sources */,
+				B282003D1D75F770006F9874 /* GameOverViewController.swift in Sources */,
 				B275AAB91D5ACE3D00F8D910 /* AppDelegate.swift in Sources */,
 				B28200331D6C0DF4006F9874 /* TileMove.swift in Sources */,
 				B2591D7F1D661A3300B929EF /* Array2D.swift in Sources */,

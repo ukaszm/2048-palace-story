@@ -9,7 +9,7 @@
 import UIKit
 import SpriteKit
 
-class GameViewController: UIViewController {
+class GameViewController: BaseViewController {
     
     @IBOutlet weak var scoreLabel: UILabel!
     
@@ -24,23 +24,6 @@ extension GameViewController {
         super.viewDidLoad()
         newGame()
     }
-
-    override func shouldAutorotate() -> Bool {
-        return true
-    }
-
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return [.Portrait, .PortraitUpsideDown]
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
-
-    override func prefersStatusBarHidden() -> Bool {
-        return true
-    }
 }
 
 //MARK: actions
@@ -50,6 +33,7 @@ extension GameViewController {
     }
     
     @IBAction func gameOverAction(sender: AnyObject) {
+        gameOver()
     }
 }
 
@@ -77,6 +61,13 @@ extension GameViewController {
         
         skView.showsFPS = true
         skView.showsNodeCount = true
+    }
+    
+    private func gameOver() {
+        guard let vc = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("GameOverViewController") as? GameOverViewController else { return }
+        vc.delegate = self
+        //vc.modalTransitionStyle = .CrossDissolve
+        showViewController(vc, sender: nil)
     }
     
     private func handleSwipe(direction: MoveDirection) {
@@ -114,7 +105,7 @@ extension GameViewController {
         if HighScore.newHighScore(board.points) {
             print("new HighScore: \(HighScore.points)")
         }
-        print("GAME OVER")
+        gameOver()
     }
     
     private func updateScore() {
@@ -122,4 +113,10 @@ extension GameViewController {
     }
 }
 
+//MARK: GameOverViewControllerDelegate
+extension GameViewController: GameOverViewControllerDelegate {
+    func playAgain() {
+        newGame()
+    }
+}
 

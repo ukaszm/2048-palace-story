@@ -11,7 +11,7 @@ import UIKit
 extension UILabel {
     var substituteFontName : String {
         get { return self.font.fontName }
-        set { self.font = UIFont(name: newValue, size: self.font.pointSize * 2) }
+        set { self.font = UIFont(name: newValue, size: self.font.pointSize) }
     }
     
 }
