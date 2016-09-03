@@ -53,7 +53,7 @@ extension GameOverViewController{
     
     private func startAnimation() {
         let scoreOffset: CGFloat = 100
-        let playAgainOffset: CGFloat = 60
+        let playAgainOffset: CGFloat = 120
         gameOverImageView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5)
         scoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, -scoreOffset, 0)
         bestScoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, scoreOffset, 0)
@@ -66,7 +66,7 @@ extension GameOverViewController{
             self.scoreLabel.layoutIfNeeded()
             self.bestScoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, -scoreOffset/2, 0)
             self.bestScoreLabel.layoutIfNeeded()
-            self.playAgainButton.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, -playAgainOffset/4)
+            self.playAgainButton.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, -playAgainOffset/8)
             self.playAgainButton.layoutIfNeeded()
             }, completion: finalizeAnimation)
     }

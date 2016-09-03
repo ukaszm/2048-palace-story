@@ -62,8 +62,8 @@ extension GameViewController {
         updateScore()
         
         if let tileSize = scene.tileSize {
-            restartButtonYConstraint.constant = -2*tileSize
-            scoreLabelYConstraint.constant = 2*tileSize + 8
+            restartButtonYConstraint.constant = -2.05*tileSize
+            scoreLabelYConstraint.constant = 2.10*tileSize
         }
         
         //skView.showsFPS = true
