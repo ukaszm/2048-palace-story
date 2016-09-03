@@ -13,7 +13,10 @@ class BaseViewController: UIViewController {
     deinit {
         print("deinit: \(self.dynamicType)")
     }
-    
+}
+
+//MARK: overrided methods
+extension BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }

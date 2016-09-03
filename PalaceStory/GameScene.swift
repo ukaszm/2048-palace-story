@@ -33,7 +33,7 @@ struct GameOptions {
     
     private(set) static var ratio: CGFloat! = nil
     
-    static var tileSize: CGFloat {
+    private static var tileSize: CGFloat {
         assert(ratio != nil)
         return ratio * 270.0
     }
@@ -115,8 +115,12 @@ extension GameScene {
     }
 }
 
-//MARK: methods
+//MARK: internal methods
 extension GameScene {
+    var tileSize: CGFloat? {
+        return GameOptions.ratio != nil ? GameOptions.tileSize : nil
+    }
+    
     func addSpriteForTiles(tiles: [Tile?]) {
         for tile in tiles {
             guard let tile = tile else { continue }

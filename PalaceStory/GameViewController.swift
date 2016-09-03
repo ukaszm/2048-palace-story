@@ -15,6 +15,8 @@ class GameViewController: BaseViewController {
     
     var scene: GameScene!
     var board: Board!
+    @IBOutlet weak var restartButtonYConstraint: NSLayoutConstraint!
+    @IBOutlet weak var scoreLabelYConstraint: NSLayoutConstraint!
 }
 
 //MARK: overrided methods
@@ -59,15 +61,22 @@ extension GameViewController {
         scene.addSpriteForTiles(newTiles)
         updateScore()
         
-        skView.showsFPS = true
-        skView.showsNodeCount = true
+        if let tileSize = scene.tileSize {
+            restartButtonYConstraint.constant = -2*tileSize
+            scoreLabelYConstraint.constant = 2*tileSize + 8
+        }
+        
+        //skView.showsFPS = true
+        //skView.showsNodeCount = true
     }
     
     private func gameOver() {
         guard let vc = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("GameOverViewController") as? GameOverViewController else { return }
         vc.delegate = self
-        //vc.modalTransitionStyle = .CrossDissolve
-        showViewController(vc, sender: nil)
+
+        vc.modalPresentationStyle = .OverFullScreen
+        //showViewController(vc, sender: nil)
+        presentViewController(vc, animated: true, completion: nil)
     }
     
     private func handleSwipe(direction: MoveDirection) {
@@ -115,6 +124,9 @@ extension GameViewController {
 
 //MARK: GameOverViewControllerDelegate
 extension GameViewController: GameOverViewControllerDelegate {
+    var gameScore: Int {
+        return board.points
+    }
     func playAgain() {
         newGame()
     }
