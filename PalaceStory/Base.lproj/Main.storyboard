@@ -125,10 +125,10 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 99999" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="24" translatesAutoresizingMaskIntoConstraints="NO" id="aBM-pv-NEV">
-                                <rect key="frame" x="250" y="428" width="100" height="74"/>
+                                <rect key="frame" x="240" y="428" width="120" height="74"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="fhT-dN-31d">
-                                        <variation key="widthClass=regular" constant="200"/>
+                                    <constraint firstAttribute="width" constant="120" id="fhT-dN-31d">
+                                        <variation key="widthClass=regular" constant="240"/>
                                     </constraint>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="62"/>

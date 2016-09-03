@@ -60,6 +60,7 @@ extension GameViewController {
         let newTiles = board.newGame()
         scene.addSpriteForTiles(newTiles)
         updateScore()
+        view.userInteractionEnabled = true
         
         if let tileSize = scene.tileSize {
             restartButtonYConstraint.constant = -2.05*tileSize
@@ -71,23 +72,26 @@ extension GameViewController {
     }
     
     private func gameOver() {
-        guard let vc = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("GameOverViewController") as? GameOverViewController else { return }
-        vc.delegate = self
-
-        vc.modalPresentationStyle = .OverFullScreen
-        //showViewController(vc, sender: nil)
-        presentViewController(vc, animated: true, completion: nil)
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_MSEC) * 500), dispatch_get_main_queue()) {
+            [unowned self] in
+            guard let vc = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("GameOverViewController") as? GameOverViewController else { return }
+            vc.delegate = self
+            
+            vc.modalPresentationStyle = .OverFullScreen
+            //showViewController(vc, sender: nil)
+            self.presentViewController(vc, animated: true, completion: nil)
+        }
     }
     
     private func handleSwipe(direction: MoveDirection) {
         guard direction != .Unknown else { return }
-        view.userInteractionEnabled = false
         board.prepareForHandlingMove()
         guard board.isPossibleMove(direction) else {
-            view.userInteractionEnabled = true
             scene.playSound(.Wrong)
             return
         }
+        view.userInteractionEnabled = false
         scene.playSound(.Move)
         performTilesMove(direction)
     }
@@ -104,16 +108,19 @@ extension GameViewController {
             let tile = board.addBasicTile()
             scene.addSpriteForTiles([tile])
             checkGameOver()
-            view.userInteractionEnabled = true
         }
     }
     
     private func checkGameOver() {
-        guard board.isItGameOver() else { return }
+        guard board.isItGameOver() else {
+            view.userInteractionEnabled = true
+            return
+        }
         scene.playSound(.GameOver)
         if HighScore.newHighScore(board.points) {
             print("new HighScore: \(HighScore.points)")
         }
+        
         gameOver()
     }
     
