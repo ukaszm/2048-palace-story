@@ -36,7 +36,9 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I2I-K0-e1j">
                                 <rect key="frame" x="410" y="94" width="150" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal" title="Game Over"/>
+                                <state key="normal" title="Game Over">
+                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
                                 <connections>
                                     <action selector="gameOverAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="kQb-gM-CH4"/>
                                 </connections>
@@ -57,6 +59,11 @@
                             <constraint firstItem="I2I-K0-e1j" firstAttribute="centerY" secondItem="NAx-0g-Mrs" secondAttribute="centerY" id="t02-02-HVg"/>
                             <constraint firstItem="NAx-0g-Mrs" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="centerY" constant="-160" id="zcs-3U-gl4"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="I2I-K0-e1j"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="restartButtonYConstraint" destination="zcs-3U-gl4" id="z1J-xZ-nTu"/>
