@@ -264,6 +264,7 @@
 				TargetAttributes = {
 					B275AAB41D5ACE3D00F8D910 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = C6UURRL96Y;
 					};
 					B275AACC1D5ACE3E00F8D910 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -485,7 +486,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = PalaceStory/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.FuriousMidgetGiraffe.PalaceStory;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -496,7 +499,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = PalaceStory/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.FuriousMidgetGiraffe.PalaceStory;
 				PRODUCT_NAME = "$(TARGET_NAME)";
