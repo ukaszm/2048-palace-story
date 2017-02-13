@@ -12,14 +12,18 @@ import AVFoundation
 enum SoundType: Int {
     case move = 0, wrong, gameOver
     
+    static let moveSoundAction = SKAction.playSoundFileNamed("Sounds/move.wav", waitForCompletion: false)
+    static let wrongSoundAction = SKAction.playSoundFileNamed("Sounds/wrong.wav", waitForCompletion: false)
+    static let gameOverSoundAction = SKAction.playSoundFileNamed("Sounds/game_over.wav", waitForCompletion: false)
+    
     var playAction: SKAction {
         switch self {
         case .move:
-            return SKAction.playSoundFileNamed("Sounds/move.wav", waitForCompletion: false)
+            return SoundType.moveSoundAction
         case .wrong:
-            return SKAction.playSoundFileNamed("Sounds/wrong.wav", waitForCompletion: false)
+            return SoundType.wrongSoundAction
         case .gameOver:
-            return SKAction.playSoundFileNamed("Sounds/game_over.wav", waitForCompletion: false)
+            return SoundType.gameOverSoundAction
         }
     }
 }
