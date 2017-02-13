@@ -11,12 +11,12 @@ import Foundation
 struct Array2D<T> {
     let rows: Int
     let columns: Int
-    private var array: Array<T?>
+    fileprivate var array: Array<T?>
     
     init(row: Int, column: Int) {
         self.rows = row
         self.columns = column
-        array = Array<T?>(count: row * column, repeatedValue: nil)
+        array = Array<T?>(repeating: nil, count: row * column)
     }
     
     subscript (row: Int, column: Int) -> T? {

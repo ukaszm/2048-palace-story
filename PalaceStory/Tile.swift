@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum TileType: Int {
-    case Unknown = 0, Fireplace_1, Halftent_2, Fulltent_3, Shed_4, Hut_5, House_6, Maisonette_7, Residence_8, Villa_9, ManorHouse_10, Castle_11, Palace_12
+    case unknown = 0, fireplace_1, halftent_2, fulltent_3, shed_4, hut_5, house_6, maisonette_7, residence_8, villa_9, manorHouse_10, castle_11, palace_12
     
 }
 
@@ -26,7 +26,7 @@ extension TileType {
     }
     
     var nextTile: TileType {
-        guard let tile = TileType(rawValue: rawValue + 1) else { return .Palace_12 }
+        guard let tile = TileType(rawValue: rawValue + 1) else { return .palace_12 }
         return tile
     }
     
@@ -35,7 +35,7 @@ extension TileType {
     }
     
     static var basicTile: TileType {
-        return .Fireplace_1
+        return .fireplace_1
     }
 }
 

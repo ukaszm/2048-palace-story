@@ -35,7 +35,7 @@ extension GameOverViewController {
     }
 
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
     }
@@ -51,35 +51,35 @@ extension GameOverViewController {
 //MARK: private
 extension GameOverViewController{
     
-    private func startAnimation() {
+    fileprivate func startAnimation() {
         let scoreOffset: CGFloat = 100
         let playAgainOffset: CGFloat = 120
-        gameOverImageView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.5, 0.5)
-        scoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, -scoreOffset, 0)
-        bestScoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, scoreOffset, 0)
-        playAgainButton.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, playAgainOffset)
+        gameOverImageView.transform = CGAffineTransform.identity.scaledBy(x: 0.5, y: 0.5)
+        scoreLabel.transform = CGAffineTransform.identity.translatedBy(x: -scoreOffset, y: 0)
+        bestScoreLabel.transform = CGAffineTransform.identity.translatedBy(x: scoreOffset, y: 0)
+        playAgainButton.transform = CGAffineTransform.identity.translatedBy(x: 0, y: playAgainOffset)
         
-        UIView.animateWithDuration(0.5, delay: 0, options: .CurveEaseIn, animations: { [unowned self] in
-            self.gameOverImageView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.25, 1.25)
+        UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn, animations: { [unowned self] in
+            self.gameOverImageView.transform = CGAffineTransform.identity.scaledBy(x: 1.25, y: 1.25)
             self.gameOverImageView.layoutIfNeeded()
-            self.scoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, scoreOffset/2, 0)
+            self.scoreLabel.transform = CGAffineTransform.identity.translatedBy(x: scoreOffset/2, y: 0)
             self.scoreLabel.layoutIfNeeded()
-            self.bestScoreLabel.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, -scoreOffset/2, 0)
+            self.bestScoreLabel.transform = CGAffineTransform.identity.translatedBy(x: -scoreOffset/2, y: 0)
             self.bestScoreLabel.layoutIfNeeded()
-            self.playAgainButton.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, 0, -playAgainOffset/8)
+            self.playAgainButton.transform = CGAffineTransform.identity.translatedBy(x: 0, y: -playAgainOffset/8)
             self.playAgainButton.layoutIfNeeded()
             }, completion: finalizeAnimation)
     }
     
-    private func finalizeAnimation(notUsedParam: Bool) {
-        UIView.animateWithDuration(0.2, delay: 0, options: .CurveEaseOut, animations: { [unowned self] in
-            self.gameOverImageView.transform = CGAffineTransformIdentity
+    fileprivate func finalizeAnimation(_ notUsedParam: Bool) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: { [unowned self] in
+            self.gameOverImageView.transform = CGAffineTransform.identity
             self.gameOverImageView.layoutIfNeeded()
-            self.scoreLabel.transform = CGAffineTransformIdentity
+            self.scoreLabel.transform = CGAffineTransform.identity
             self.scoreLabel.layoutIfNeeded()
-            self.bestScoreLabel.transform = CGAffineTransformIdentity
+            self.bestScoreLabel.transform = CGAffineTransform.identity
             self.bestScoreLabel.layoutIfNeeded()
-            self.playAgainButton.transform = CGAffineTransformIdentity
+            self.playAgainButton.transform = CGAffineTransform.identity
             self.playAgainButton.layoutIfNeeded()
             }, completion: nil)
     }
@@ -88,8 +88,8 @@ extension GameOverViewController{
 //MARK: actions
 extension GameOverViewController {
     
-    @IBAction func playAgainAction(sender: AnyObject) {
+    @IBAction func playAgainAction(_ sender: AnyObject) {
         delegate?.playAgain()
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }

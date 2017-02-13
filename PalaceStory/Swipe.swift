@@ -10,7 +10,7 @@ import SpriteKit
 import Foundation
 
 enum MoveDirection: Int, CustomStringConvertible {
-    case Unknown = 0, Left, Right, Up, Down
+    case unknown = 0, left, right, up, down
     
     var description: String {
         let directions = ["Unknown", "Left", "Right", "Up", "Down"]
@@ -24,13 +24,13 @@ struct Swipe {
     var stop: CGPoint?
     
     var direction: MoveDirection {
-        guard let start = start, stop = stop else { return .Unknown }
+        guard let start = start, let stop = stop else { return .unknown }
         let dirX = stop.x - start.x
         let dirY = stop.y - start.y
-        guard abs(dirX) >= GameOptions.minMoveLength || abs(dirY) >= GameOptions.minMoveLength else { return .Unknown }
+        guard abs(dirX) >= GameOptions.minMoveLength || abs(dirY) >= GameOptions.minMoveLength else { return .unknown }
         
-        let horizontal: MoveDirection = dirX > 0 ? .Right : .Left
-        let vertical: MoveDirection = dirY > 0 ? .Up : .Down
+        let horizontal: MoveDirection = dirX > 0 ? .right : .left
+        let vertical: MoveDirection = dirY > 0 ? .up : .down
         
         return abs(dirX) >= abs(dirY) ? horizontal : vertical
     }

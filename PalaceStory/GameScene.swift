@@ -10,15 +10,15 @@ import SpriteKit
 import AVFoundation
 
 enum SoundType: Int {
-    case Move = 0, Wrong, GameOver
+    case move = 0, wrong, gameOver
     
     var playAction: SKAction {
         switch self {
-        case .Move:
+        case .move:
             return SKAction.playSoundFileNamed("Sounds/move.wav", waitForCompletion: false)
-        case .Wrong:
+        case .wrong:
             return SKAction.playSoundFileNamed("Sounds/wrong.wav", waitForCompletion: false)
-        case .GameOver:
+        case .gameOver:
             return SKAction.playSoundFileNamed("Sounds/game_over.wav", waitForCompletion: false)
         }
     }
@@ -31,9 +31,9 @@ struct GameOptions {
     static let boardOffsetY: CGFloat = 12.0
     static let minMoveLength: CGFloat = 40.0
     
-    private(set) static var ratio: CGFloat! = nil
+    fileprivate(set) static var ratio: CGFloat! = nil
     
-    private static var tileSize: CGFloat {
+    fileprivate static var tileSize: CGFloat {
         assert(ratio != nil)
         return ratio * 270.0
     }
@@ -41,12 +41,12 @@ struct GameOptions {
 
 class GameScene: SKScene {
     var board: Board!
-    var swipeHandler: ((direction: MoveDirection) -> ())?
+    var swipeHandler: ((_ direction: MoveDirection) -> ())?
     
     let gameLayer = SKNode()
     let tilesLayer = SKNode()
     
-    private var swipe = Swipe()
+    fileprivate var swipe = Swipe()
     
     override init(size: CGSize) {
         super.init(size: size)
@@ -74,43 +74,43 @@ class GameScene: SKScene {
 
 //MARK: overrided methods
 extension GameScene {
-    override func didMoveToView(view: SKView) {
-        super.didMoveToView(view)
+    override func didMove(to view: SKView) {
+        super.didMove(to: view)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesBegan(touches, withEvent: event)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
         
         guard let touch = touches.first else { return }
-        swipe.start = touch.locationInNode(tilesLayer)
+        swipe.start = touch.location(in: tilesLayer)
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesMoved(touches, withEvent: event)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
         
         guard let touch = touches.first else {
             swipe.stop = nil
             return
         }
-        swipe.stop = touch.locationInNode(tilesLayer)
+        swipe.stop = touch.location(in: tilesLayer)
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        super.touchesEnded(touches, withEvent: event)
-        swipeHandler?(direction: swipe.direction)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        swipeHandler?(swipe.direction)
         
         swipe.start = nil
         swipe.stop = nil
     }
     
-    override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-        super.touchesCancelled(touches, withEvent: event)
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
         
         swipe.start = nil
         swipe.stop = nil
     }
    
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
 
     }
 }
@@ -121,7 +121,7 @@ extension GameScene {
         return GameOptions.ratio != nil ? GameOptions.tileSize : nil
     }
     
-    func addSpriteForTiles(tiles: [Tile?]) {
+    func addSpriteForTiles(_ tiles: [Tile?]) {
         for tile in tiles {
             guard let tile = tile else { continue }
             let sprite = SKSpriteNode(imageNamed: tile.tileType.spriteName)
@@ -131,56 +131,56 @@ extension GameScene {
             tilesLayer.addChild(sprite)
             
             
-            let bouncingAction = SKAction.repeatActionForever(SKAction.sequence([
-                SKAction.scaleTo(0.9, duration: 0.75), SKAction.scaleTo(1.0, duration: 0.75)]))
+            let bouncingAction = SKAction.repeatForever(SKAction.sequence([
+                SKAction.scale(to: 0.9, duration: 0.75), SKAction.scale(to: 1.0, duration: 0.75)]))
             
-            sprite.runAction( SKAction.sequence([SKAction.fadeInWithDuration(0.1), bouncingAction]))
+            sprite.run( SKAction.sequence([SKAction.fadeIn(withDuration: 0.1), bouncingAction]))
         }
     }
     
-    func animateSpriteSwipe(moves: [TileMove], completion: ()->()) {
+    func animateSpriteSwipe(_ moves: [TileMove], completion: @escaping ()->()) {
 
-        let moveDuration:  NSTimeInterval = 0.05
-        let fadeDuration:  NSTimeInterval = 0.05
+        let moveDuration:  TimeInterval = 0.05
+        let fadeDuration:  TimeInterval = 0.05
         
-        let fadeAction = SKAction.fadeOutWithDuration(fadeDuration)
-        let waitForMoveAction = SKAction.waitForDuration(moveDuration)
+        let fadeAction = SKAction.fadeOut(withDuration: fadeDuration)
+        let waitForMoveAction = SKAction.wait(forDuration: moveDuration)
         let removeAction = SKAction.removeFromParent()
         
         for move in moves {
             guard let sprite = move.tile.sprite else { continue }
             
-            let moveAction = SKAction.moveTo(pointForTile(row: move.to.row, column: move.to.column), duration: moveDuration)
+            let moveAction = SKAction.move(to: pointForTile(row: move.to.row, column: move.to.column), duration: moveDuration)
             guard let _ = move.newTile else {
-                sprite.runAction(moveAction)
+                sprite.run(moveAction)
                 continue
             }
         
             let actions = [moveAction, fadeAction, removeAction]
             sprite.removeAllActions()
             sprite.setScale(1.0)
-            sprite.runAction(SKAction.sequence(actions))
+            sprite.run(SKAction.sequence(actions))
             
             let spriteBActions = [waitForMoveAction, removeAction]
             move.tileB?.sprite?.removeAllActions()
             move.tileB?.sprite?.setScale(1.0)
-            move.tileB?.sprite?.runAction(SKAction.sequence(spriteBActions))
+            move.tileB?.sprite?.run(SKAction.sequence(spriteBActions))
             
-            let newSpriteAction = SKAction.runBlock{ [unowned self] in self.addSpriteForTiles([move.newTile]) }
-            runAction(SKAction.sequence([waitForMoveAction, newSpriteAction]))
+            let newSpriteAction = SKAction.run{ [unowned self] in self.addSpriteForTiles([move.newTile]) }
+            run(SKAction.sequence([waitForMoveAction, newSpriteAction]))
         }
-        let runCompletionAction = SKAction.runBlock { completion() }
-        runAction(SKAction.sequence([waitForMoveAction, runCompletionAction]))
+        let runCompletionAction = SKAction.run { completion() }
+        run(SKAction.sequence([waitForMoveAction, runCompletionAction]))
     }
     
-    func playSound(soundType: SoundType){
-        runAction(soundType.playAction)
+    func playSound(_ soundType: SoundType){
+        run(soundType.playAction)
     }
 }
 
 //MARK: private methods
 extension GameScene {
-    private func pointForTile(row row: Int, column: Int) -> CGPoint {
+    fileprivate func pointForTile(row: Int, column: Int) -> CGPoint {
         return CGPoint(x: GameOptions.tileSize * CGFloat(column) + GameOptions.tileSize / 2,
                        y: -GameOptions.tileSize * CGFloat(row) - GameOptions.tileSize / 2)
     }

@@ -14,8 +14,8 @@ struct BoardCoords {
 }
 
 class Board {
-    private var tiles: Array2D<Tile>
-    private (set) var points = 0
+    fileprivate var tiles: Array2D<Tile>
+    fileprivate (set) var points = 0
     
     init() {
         tiles = Array2D(row: GameOptions.boardSize, column: GameOptions.boardSize)
@@ -28,7 +28,7 @@ class Board {
 
 //MARK: methods
 extension Board {
-    func tileAt(row row: Int, column: Int) -> Tile? {
+    func tileAt(row: Int, column: Int) -> Tile? {
         assert(row>=0 && row<GameOptions.boardSize)
         assert(column>=0 && column<GameOptions.boardSize)
         return tiles[row, column]
@@ -50,7 +50,7 @@ extension Board {
     
     func isItGameOver() -> Bool {
         prepareForHandlingMove()
-        return !(isPossibleMove(.Left) || isPossibleMove(.Right) || isPossibleMove(.Up) || isPossibleMove(.Down))
+        return !(isPossibleMove(.left) || isPossibleMove(.right) || isPossibleMove(.up) || isPossibleMove(.down))
     }
     
     func prepareForHandlingMove() {
@@ -59,7 +59,7 @@ extension Board {
         }
     }
     
-    func isPossibleMove(direction: MoveDirection) -> Bool {
+    func isPossibleMove(_ direction: MoveDirection) -> Bool {
         
         var canMove = false
         executeForTileSwiping(direction) { [unowned self] (tileCoords, nextTileCoords) in
@@ -70,7 +70,7 @@ extension Board {
         return canMove
     }
 
-    func performSwipe(direction: MoveDirection) -> [TileMove] {
+    func performSwipe(_ direction: MoveDirection) -> [TileMove] {
         return moveTiles(direction)
     }
 
@@ -91,7 +91,7 @@ extension Board {
         return emptyTiles[Int(arc4random_uniform(UInt32(emptyTiles.count)))]
     }
     
-    private func moveTiles(direction: MoveDirection) -> [TileMove] {
+    fileprivate func moveTiles(_ direction: MoveDirection) -> [TileMove] {
         var moves = [TileMove]()
         executeForTileSwiping(direction) { [unowned self] (tileCoords, nextTileCoords) in
             guard let tile = self.tiles[tileCoords.row, tileCoords.column] else { return }
@@ -114,37 +114,37 @@ extension Board {
         return moves
     }
     
-    private func executeForTileSwiping(direction: MoveDirection, action: (tileCoords: BoardCoords, nextTileCoords: BoardCoords)->()) {
-        var rowsStride    = 0.stride(through: GameOptions.boardSize - 1, by: 1)
-        var columnsStride = 0.stride(through: GameOptions.boardSize - 1, by: 1)
+    fileprivate func executeForTileSwiping(_ direction: MoveDirection, action: (_ tileCoords: BoardCoords, _ nextTileCoords: BoardCoords)->()) {
+        var rowsStride    = stride(from: 0, through: GameOptions.boardSize - 1, by: 1)
+        var columnsStride = stride(from: 0, through: GameOptions.boardSize - 1, by: 1)
         var nextRowOffset    = 0
         var nextColumnOffset = 0
         
         switch direction {
-        case .Unknown:
+        case .unknown:
             return
-        case .Left:
-            columnsStride = 1.stride(through: GameOptions.boardSize - 1, by: 1)
+        case .left:
+            columnsStride = stride(from: 1, through: GameOptions.boardSize - 1, by: 1)
             nextColumnOffset = -1
-        case .Right:
-            columnsStride = (GameOptions.boardSize - 2).stride(through: 0, by: -1)
+        case .right:
+            columnsStride = stride(from: (GameOptions.boardSize - 2), through: 0, by: -1)
             nextColumnOffset = 1
-        case .Up:
-            rowsStride = 1.stride(through: GameOptions.boardSize - 1, by: 1)
+        case .up:
+            rowsStride = stride(from: 1, through: GameOptions.boardSize - 1, by: 1)
             nextRowOffset = -1
-        case .Down:
-            rowsStride = (GameOptions.boardSize - 2).stride(through: 0, by: -1)
+        case .down:
+            rowsStride = stride(from: (GameOptions.boardSize - 2), through: 0, by: -1)
             nextRowOffset = 1
         }
         
         for row in rowsStride {
             for column in columnsStride {
-                action(tileCoords: BoardCoords(row: row, column: column), nextTileCoords: BoardCoords(row: row + nextRowOffset, column: column + nextColumnOffset))
+                action(BoardCoords(row: row, column: column), BoardCoords(row: row + nextRowOffset, column: column + nextColumnOffset))
             }
         }
     }
     
-    private func checkMoveConditionsFor(tile tile: Tile?, nextTile: Tile?) -> Bool {
+    fileprivate func checkMoveConditionsFor(tile: Tile?, nextTile: Tile?) -> Bool {
         guard let tile = tile else { return false }
         guard let nextTile = nextTile else { return true }
         if tile.tileType == nextTile.tileType && tile.canEvolve && nextTile.canEvolve { return true }
@@ -155,7 +155,7 @@ extension Board {
 
 //MARK: static methods
 extension Board {
-    static func executeForEveryField(toExecute: (BoardCoords)->()) {
+    static func executeForEveryField(_ toExecute: (BoardCoords)->()) {
         for row in 0..<GameOptions.boardSize {
             for column in 0..<GameOptions.boardSize {
                 toExecute(BoardCoords(row: row, column: column))

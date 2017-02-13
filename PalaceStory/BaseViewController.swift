@@ -11,7 +11,7 @@ import UIKit
 class BaseViewController: UIViewController {
 
     deinit {
-        print("deinit: \(self.dynamicType)")
+        print("deinit: \(type(of: self))")
     }
 }
 
@@ -21,20 +21,20 @@ extension BaseViewController {
         super.viewDidLoad()
     }
     
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return [.Portrait, .PortraitUpsideDown]
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        return [.portrait, .portraitUpsideDown]
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        print("didReceiveMemoryWarning: \(self.dynamicType)")
+        print("didReceiveMemoryWarning: \(type(of: self))")
     }
 }

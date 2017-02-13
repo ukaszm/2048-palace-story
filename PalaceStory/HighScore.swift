@@ -9,16 +9,16 @@
 import Foundation
 
 class HighScore {
-    private static let highScoreKey = "highScoreKey"
+    fileprivate static let highScoreKey = "highScoreKey"
     static var points: Int {
         get {
-            return NSUserDefaults.standardUserDefaults().integerForKey(highScoreKey)
+            return UserDefaults.standard.integer(forKey: highScoreKey)
         }
         set {
-            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: highScoreKey)
+            UserDefaults.standard.set(newValue, forKey: highScoreKey)
         }
     }
-    static func newHighScore(score: Int) -> Bool {
+    static func newHighScore(_ score: Int) -> Bool {
         if score > points {
             points = score
             return true

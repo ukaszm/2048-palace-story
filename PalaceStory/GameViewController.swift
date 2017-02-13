@@ -30,11 +30,11 @@ extension GameViewController {
 
 //MARK: actions
 extension GameViewController {
-    @IBAction func restartGameAction(sender: AnyObject) {
+    @IBAction func restartGameAction(_ sender: AnyObject) {
         newGame()
     }
     
-    @IBAction func gameOverAction(sender: AnyObject) {
+    @IBAction func gameOverAction(_ sender: AnyObject) {
         gameOver()
     }
 }
@@ -47,10 +47,10 @@ extension GameViewController {
 //MARK: private methods
 extension GameViewController {
     
-    private func newGame() {
+    fileprivate func newGame() {
         guard let skView = view as? SKView else { return }
         scene = GameScene(size: skView.bounds.size)
-        scene.scaleMode = .AspectFill
+        scene.scaleMode = .aspectFill
         board = Board()
         scene.board = board
         scene.swipeHandler = handleSwipe
@@ -60,7 +60,7 @@ extension GameViewController {
         let newTiles = board.newGame()
         scene.addSpriteForTiles(newTiles)
         updateScore()
-        view.userInteractionEnabled = true
+        view.isUserInteractionEnabled = true
         
         if let tileSize = scene.tileSize {
             restartButtonYConstraint.constant = -2.05*tileSize
@@ -71,32 +71,32 @@ extension GameViewController {
         //skView.showsNodeCount = true
     }
     
-    private func gameOver() {
+    fileprivate func gameOver() {
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_MSEC) * 500), dispatch_get_main_queue()) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(NSEC_PER_MSEC) * 500) / Double(NSEC_PER_SEC)) {
             [unowned self] in
-            guard let vc = UIStoryboard(name: "Main", bundle: NSBundle.mainBundle()).instantiateViewControllerWithIdentifier("GameOverViewController") as? GameOverViewController else { return }
+            guard let vc = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "GameOverViewController") as? GameOverViewController else { return }
             vc.delegate = self
             
-            vc.modalPresentationStyle = .OverFullScreen
+            vc.modalPresentationStyle = .overFullScreen
             //showViewController(vc, sender: nil)
-            self.presentViewController(vc, animated: true, completion: nil)
+            self.present(vc, animated: true, completion: nil)
         }
     }
     
-    private func handleSwipe(direction: MoveDirection) {
-        guard direction != .Unknown else { return }
+    fileprivate func handleSwipe(_ direction: MoveDirection) {
+        guard direction != .unknown else { return }
         board.prepareForHandlingMove()
         guard board.isPossibleMove(direction) else {
-            scene.playSound(.Wrong)
+            scene.playSound(.wrong)
             return
         }
-        view.userInteractionEnabled = false
-        scene.playSound(.Move)
+        view.isUserInteractionEnabled = false
+        scene.playSound(.move)
         performTilesMove(direction)
     }
     
-    private func performTilesMove(direction: MoveDirection) {
+    fileprivate func performTilesMove(_ direction: MoveDirection) {
         if board.isPossibleMove(direction) {
             let moves = board.performSwipe(direction)
             scene.animateSpriteSwipe(moves) { [unowned self] in
@@ -111,12 +111,12 @@ extension GameViewController {
         }
     }
     
-    private func checkGameOver() {
+    fileprivate func checkGameOver() {
         guard board.isItGameOver() else {
-            view.userInteractionEnabled = true
+            view.isUserInteractionEnabled = true
             return
         }
-        scene.playSound(.GameOver)
+        scene.playSound(.gameOver)
         if HighScore.newHighScore(board.points) {
             print("new HighScore: \(HighScore.points)")
         }
@@ -124,7 +124,7 @@ extension GameViewController {
         gameOver()
     }
     
-    private func updateScore() {
+    fileprivate func updateScore() {
         scoreLabel.text = "Score: \(board.points)"
     }
 }
